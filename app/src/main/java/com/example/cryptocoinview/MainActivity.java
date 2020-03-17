@@ -28,19 +28,17 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        inWide = findViewById(R.id.scroll_view) != null;
+
 
         CoinAdapter.RecyclerViewClickListener listener = new CoinAdapter.RecyclerViewClickListener(){
             @Override
             public void onClick(View v, int position) {
-//                launchDetailActivity(position);
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                Fragment fragment = new DetailFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("inWide", inWide);
-                fragment.setArguments(bundle);
-                transaction.replace(R.id.scrollView, fragment);
-                transaction.commit();
+                if (inWide) {
+                    updateDetailFragment(position);
+                } else {
+                    launchDetailActivity(position);
+                }
             }
         };
 
@@ -49,10 +47,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    public void launchDetailActivity(int position) {
-//        Intent intent = new Intent(this, DetailActivity.class);
-//        intent.putExtra(EXTRA_MESSAGE, position);
-//        startActivity(intent);
-//    }
+    public void updateDetailFragment(int pos) {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Fragment fragment = new DetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", pos);
+        fragment.setArguments(bundle);
+        transaction.replace(R.id.scroll_view, fragment);
+        transaction.commit();
+    }
+
+    public void launchDetailActivity(int position) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, position);
+        startActivity(intent);
+    }
 }
 

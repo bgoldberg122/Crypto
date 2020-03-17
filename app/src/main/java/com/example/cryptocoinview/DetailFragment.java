@@ -1,7 +1,5 @@
 package com.example.cryptocoinview;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,56 +26,67 @@ public class DetailFragment extends Fragment {
     private ImageView searchImage;
     private TextView nameLabel;
     private TextView abreviationLabel;
-    View.OnClickListener listener;
+//    View.OnClickListener listener;
     public final String GOOGLE_DOMAIN = "https://www.google.com/search?q=";
 
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public DetailFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DetailFragment newInstance(String param1, String param2) {
-        DetailFragment fragment = new DetailFragment();
-        Bundle args = new Bundle();
-        args.putString("cat", param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    /**
+//     * Use this factory method to create a new instance of
+//     * this fragment using the provided parameters.
+//     *
+//     * @param param1 Parameter 1.
+//     * @param param2 Parameter 2.
+//     * @return A new instance of fragment DetailFragment.
+//     */
+// //    TODO: Rename and change types and number of parameters
+//    public static DetailFragment newInstance(String param1, String param2) {
+//        Fragment fragment = new DetailFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putBoolean("inWide", inWide);
+//        bundle.putInt("position", position);
+//        fragment.setArguments(bundle);
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Activity parentActivity = getActivity();
+    }
 
+//    @Override
+//    public void onAttach (Context context) {
+//        super.onAttach(context);
+//        try {
+//            listener = (View.OnClickListener) context;
+//            }
+//        catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString());
+//        }
+//
+//    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        int pos = getArguments().getInt("pos");
+        View v = inflater.inflate(R.layout.fragment_detail, container, false);
         ArrayList<Coin> coins = Coin.getCoins();
 
-        Intent intent = parentActivity.getIntent();
-        int pos = intent.getIntExtra(MainActivity.EXTRA_MESSAGE,0);
-
-        valueLabel = parentActivity.findViewById(R.id.valueView);
-        hourChangeLabel = parentActivity.findViewById(R.id.hourChangeView);
-        dayChangeLabel = parentActivity.findViewById(R.id.dayChangeView);
-        weekChangeLabel = parentActivity.findViewById(R.id.weekChangeView);
-        marketcapLabel = parentActivity.findViewById(R.id.marketcapView);
-        volumeLabel = parentActivity.findViewById(R.id.volumeView);
-        image = parentActivity.findViewById(R.id.imageView);
-        searchImage = parentActivity.findViewById(R.id.imageView2);
-        nameLabel = parentActivity.findViewById(R.id.nameView);
-        abreviationLabel = parentActivity.findViewById(R.id.abrvView);
-
+        valueLabel =  v.findViewById(R.id.valueView);
+        hourChangeLabel =  v.findViewById(R.id.hourChangeView);
+        dayChangeLabel =  v.findViewById(R.id.dayChangeView);
+        weekChangeLabel =  v.findViewById(R.id.weekChangeView);
+        marketcapLabel =  v.findViewById(R.id.marketcapView);
+        volumeLabel =  v.findViewById(R.id.volumeView);
+        image =  v.findViewById(R.id.imageView);
+        searchImage =  v.findViewById(R.id.imageView2);
+        nameLabel =  v.findViewById(R.id.nameView);
+        abreviationLabel = v.findViewById(R.id.abrvView);
 
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
@@ -97,25 +106,8 @@ public class DetailFragment extends Fragment {
                 searchCoin(coin.getName());
             }
         });
-    }
 
-//    @Override
-//    public void onAttach (Context context) {
-//        super.onAttach(context);
-//        try {
-//            listener = (View.OnClickListener) context;
-//            }
-//        catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString());
-//        }
-//
-//    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail, container, false);
+        return v;
     }
 
     public void searchCoin (String coinName){
