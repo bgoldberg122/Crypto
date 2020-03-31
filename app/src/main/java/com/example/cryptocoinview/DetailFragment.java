@@ -13,7 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.List;
+import com.example.cryptocoinview.entities.Coin;
+import com.example.cryptocoinview.entities.CoinLoreResponse;
+import com.google.gson.Gson;
 
 public class DetailFragment extends Fragment {
     private TextView valueLabel;
@@ -28,86 +31,72 @@ public class DetailFragment extends Fragment {
     private TextView abreviationLabel;
 //    View.OnClickListener listener;
     public final String GOOGLE_DOMAIN = "https://www.google.com/search?q=";
+    public static final String ARG_ITEM_ID = "item_id";
+
+    private Coin coin;
 
 
     public DetailFragment() {
         // Required empty public constructor
     }
 
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment DetailFragment.
-//     */
-// //    TODO: Rename and change types and number of parameters
-//    public static DetailFragment newInstance(String param1, String param2) {
-//        Fragment fragment = new DetailFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putBoolean("inWide", inWide);
-//        bundle.putInt("position", position);
-//        fragment.setArguments(bundle);
-//        return fragment;
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments().containsKey(ARG_ITEM_ID)) {
+            Gson gson = new Gson();
+            CoinLoreResponse response = gson.fromJson(CoinLoreResponse.json, CoinLoreResponse.class);
+            List<Coin> coins = response.getData();
+
+            for (Coin c : coins) {
+                if (c.getId().equals(getArguments().getString(ARG_ITEM_ID))) {
+                    coin = c;
+                }
+            }
+        }
     }
 
-//    @Override
-//    public void onAttach (Context context) {
-//        super.onAttach(context);
-//        try {
-//            listener = (View.OnClickListener) context;
-//            }
-//        catch (ClassCastException e) {
-//            throw new ClassCastException(context.toString());
-//        }
-//
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        int pos = getArguments().getInt("position");
+//        int pos = getArguments().getInt("position");
         View v = inflater.inflate(R.layout.fragment_detail, container, false);
-        ArrayList<Coin> coins = Coin.getCoins();
 
-        valueLabel =  v.findViewById(R.id.valueView);
-        hourChangeLabel =  v.findViewById(R.id.hourChangeView);
-        dayChangeLabel =  v.findViewById(R.id.dayChangeView);
-        weekChangeLabel =  v.findViewById(R.id.weekChangeView);
-        marketcapLabel =  v.findViewById(R.id.marketcapView);
-        volumeLabel =  v.findViewById(R.id.volumeView);
-        image =  v.findViewById(R.id.imageView);
-        searchImage =  v.findViewById(R.id.imageView2);
-        nameLabel =  v.findViewById(R.id.nameView);
-        abreviationLabel = v.findViewById(R.id.abrvView);
+        if (coin != null) {
+            valueLabel = v.findViewById(R.id.valueView);
+            hourChangeLabel = v.findViewById(R.id.hourChangeView);
+            dayChangeLabel = v.findViewById(R.id.dayChangeView);
+            weekChangeLabel = v.findViewById(R.id.weekChangeView);
+            marketcapLabel = v.findViewById(R.id.marketcapView);
+            volumeLabel = v.findViewById(R.id.volumeView);
+            image = v.findViewById(R.id.imageView);
+            searchImage = v.findViewById(R.id.imageView2);
+            nameLabel = v.findViewById(R.id.nameView);
+            abreviationLabel = v.findViewById(R.id.abrvView);
 
-        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+            NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
-        final Coin coin = coins.get(pos);
+            nameLabel.setText(coin.getName());
+            valueLabel.setText(formatter.format(Double.valueOf(coin.getPriceUsd())));
+            hourChangeLabel.setText(coin.getPercentChange1h() + "%");
+            dayChangeLabel.setText(coin.getPercentChange24h() + "%");
+            weekChangeLabel.setText(coin.getPercentChange7d() + "%");
+            marketcapLabel.setText(formatter.format(Double.valueOf(coin.getMarketCapUsd())));
+            volumeLabel.setText(formatter.format(coin.getVolume24()));
+            abreviationLabel.setText(coin.getSymbol());
+            searchImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchCoin(coin.getName());
+                }
+            });
+        }
+            return v;
 
-        nameLabel.setText(coin.getName());
-        valueLabel.setText(formatter.format(coin.getValue()));
-        hourChangeLabel.setText(coin.getChange1h() + "%");
-        dayChangeLabel.setText(coin.getChange24h() + "%");
-        weekChangeLabel.setText(coin.getChange7d() + "%");
-        marketcapLabel.setText(formatter.format(coin.getMarketcap()));
-        volumeLabel.setText(formatter.format(coin.getVolume()));
-        abreviationLabel.setText(coin.getSymbol());
-        searchImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                searchCoin(coin.getName());
-            }
-        });
-
-        return v;
     }
 
     public void searchCoin (String coinName){

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -23,21 +23,16 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent intent = getIntent();
-        int pos = intent.getIntExtra(MainActivity.EXTRA_MESSAGE,0);
+        if (savedInstanceState == null) {
+            Intent intent = getIntent();
+            final String coinId = intent.getStringExtra(DetailFragment.ARG_ITEM_ID);
 
-        updateDetailFragment(pos);
-
+            DetailFragment fragment = new DetailFragment();
+            Bundle args = new Bundle();
+            args.putString(DetailFragment.ARG_ITEM_ID, coinId);
+            fragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.scroll_view, fragment).commit();
+        }
     }
 
-    public void updateDetailFragment(int pos) {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        Fragment fragment = new DetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("position", pos);
-        fragment.setArguments(bundle);
-        transaction.replace(R.id.scroll_view, fragment);
-        transaction.commit();
-    }
 }

@@ -10,9 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import com.example.cryptocoinview.entities.Coin;
+import com.example.cryptocoinview.entities.CoinLoreResponse;
+import com.google.gson.Gson;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    Boolean inWide;
+    boolean inWide;
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -23,45 +28,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        inWide = findViewById(R.id.scroll_view) != null;
 
         recyclerView = findViewById(R.id.coinList);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        inWide = findViewById(R.id.scroll_view) != null;
 
+        Gson gson = new Gson();
+        CoinLoreResponse response = gson.fromJson(CoinLoreResponse.json, CoinLoreResponse.class);
+        List<Coin> coins = response.getData();
 
-        CoinAdapter.RecyclerViewClickListener listener = new CoinAdapter.RecyclerViewClickListener(){
-            @Override
-            public void onClick(View v, int position) {
-                if (inWide) {
-                    updateDetailFragment(position);
-                } else {
-                    launchDetailActivity(position);
-                }
-            }
-        };
-
-        adapter = new CoinAdapter(Coin.getCoins(), listener);
+        adapter = new CoinAdapter(this, coins, inWide);
         recyclerView.setAdapter(adapter);
-
     }
 
-    public void updateDetailFragment(int pos) {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        Fragment fragment = new DetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("position", pos);
-        fragment.setArguments(bundle);
-        transaction.replace(R.id.scroll_view, fragment);
-        transaction.commit();
-    }
 
-    public void launchDetailActivity(int position) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, position);
-        startActivity(intent);
-    }
 }
 
