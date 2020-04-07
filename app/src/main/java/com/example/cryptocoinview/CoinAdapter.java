@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
@@ -80,5 +78,11 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
     @Override
     public int getItemCount() {
         return mCoins.size();
+    }
+
+    public void setCoins(List<Coin> coins) {
+        mCoins.clear();         //clear existing coins in the list
+        mCoins.addAll(coins);   //add all the coins that are passed in to the list
+        notifyDataSetChanged(); //notify the UI (view) about the changes
     }
 }
