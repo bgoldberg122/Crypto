@@ -98,7 +98,6 @@ public class DetailFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_detail, container, false);
         updateUi();
         return v;
-
     }
 
 
