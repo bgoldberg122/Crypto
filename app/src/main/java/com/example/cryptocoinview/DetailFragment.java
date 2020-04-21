@@ -23,6 +23,7 @@ public class DetailFragment extends Fragment {
     public final String GOOGLE_DOMAIN = "https://www.google.com/search?q=";
     public static final String ARG_ITEM_ID = "item_id";
     private String TAG = "DetailFragment";
+    //add a CoinDatabase object to allow for database data retrieval and setting
     private CoinDatabase mDb;
 
 
@@ -103,7 +104,7 @@ public class DetailFragment extends Fragment {
         //check for v being null to fix double click error
         if (v != null && coin != null) {
 
-            //display icon for coin using glide
+            //display icon for coin using glide. dynamically construct url
             ImageView coinIcon = v.findViewById(R.id.coinDetailIcon);
             Glide.with(this)
                     .load("https://www.coinlore.com/img/25x25/" + coin.getNameid() + ".png")
@@ -145,6 +146,8 @@ public class DetailFragment extends Fragment {
         startActivity(intent);
     }
 
+    //Async task to run simultaneously with main thread to get data from database because retrieving
+    //data from database can be a long process
     private class GetCoinDbTask extends AsyncTask<String, Void, Coin> {
         @Override
         protected Coin doInBackground(String... ids) {

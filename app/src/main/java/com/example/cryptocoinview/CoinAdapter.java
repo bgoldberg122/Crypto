@@ -74,7 +74,7 @@ public class CoinAdapter extends RecyclerView.Adapter<CoinAdapter.CoinViewHolder
     public void onBindViewHolder(CoinViewHolder holder, int position) {
         Coin coin = mCoins.get(position);
 
-        //Get image from coinlore.com and set the image using Glide
+        //Get image from coinlore.com and set the image using Glide. Dynamically construct url
         Glide.with(holder.itemView)
                 .load("https://www.coinlore.com/img/25x25/" + coin.getNameid() + ".png")
                 .fitCenter()
